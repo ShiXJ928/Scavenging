@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.zq.scavenging.R;
 import com.zq.scavenging.acty.BaseActy;
 import com.zq.scavenging.bean.EquipmentBean;
+import com.zq.scavenging.util.Utility;
 
 import java.util.List;
 
@@ -63,8 +64,8 @@ public class EquipmentListAdapter extends BaseAdapter {
             view = convertView;
             holder = (ViewHolder) view.getTag();
         }
-        holder.tv_name.setText(bean.getName());
-        holder.tv_position.setText(bean.getPostion());
+        holder.tv_name.setText(Utility.getEquipName(bean.getName()));
+        holder.tv_position.setText(bean.getName());
         return view;
     }
 

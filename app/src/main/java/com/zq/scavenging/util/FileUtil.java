@@ -1,11 +1,9 @@
 package com.zq.scavenging.util;
 
-import android.os.Environment;
+import android.util.Log;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.RandomAccessFile;
 
 /**
  * Created by AIERXUAN on 2018/6/23.
@@ -17,74 +15,51 @@ public class FileUtil {
      *
      * @param str
      */
-    public static void saveFile(String str, String fileName) {
-        // 创建String对象保存文件名路径
+    public static void saveFile(String str, String filePath, String fileName) {
+        makeFilePath(filePath, fileName);
+        String strFilePath = filePath + fileName;
         try {
-            // 创建指定路径的文件
-            File file = new File(Environment.getExternalStorageDirectory(), fileName);
-            // 如果文件不存在
-            if (file.exists()) {
-                // 创建新的空文件
-                file.delete();
+            File file = new File(strFilePath);
+            if (!file.exists()) {
+                Log.d("TestFile", "Create the file:" + strFilePath);
+                file.getParentFile().mkdirs();
+                file.createNewFile();
             }
-            file.createNewFile();
-            // 获取文件的输出流对象
-            FileOutputStream outStream = new FileOutputStream(file);
-            // 获取字符串对象的byte数组并写入文件流
-            outStream.write(str.getBytes());
-            // 最后关闭文件输出流
-            outStream.close();
+            RandomAccessFile raf = new RandomAccessFile(file, "rwd");
+            raf.seek(file.length());
+            raf.write(str.getBytes());
+            raf.close();
+            ToastUtil.show("盘点文件生成成功");
         } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    /**
-     * 删除已存储的文件
-     */
-    public static void deletefile(String fileName) {
-        try {
-            // 找到文件所在的路径并删除该文件
-            File file = new File(Environment.getExternalStorageDirectory(), fileName);
-            file.delete();
-        } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("TestFile", "Error on write File:" + e);
         }
     }
 
-    /**
-     * 读取文件里面的内容
-     *
-     * @return
-     */
-    public static String getFile(String fileName) {
+    // 生成文件
+    public static File makeFilePath(String filePath, String fileName) {
+        File file = null;
+        makeRootDirectory(filePath);
         try {
-            // 创建文件
-            File file = new File(Environment.getExternalStorageDirectory(), fileName);
-            // 创建FileInputStream对象
-            FileInputStream fis = new FileInputStream(file);
-            // 创建字节数组 每次缓冲1M
-            byte[] b = new byte[1024];
-            int len = 0;// 一次读取1024字节大小，没有数据后返回-1.
-            // 创建ByteArrayOutputStream对象
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            // 一次读取1024个字节，然后往字符输出流中写读取的字节数
-            while ((len = fis.read(b)) != -1) {
-                baos.write(b, 0, len);
+            file = new File(filePath + fileName);
+            if (!file.exists()) {
+                file.createNewFile();
             }
-            // 将读取的字节总数生成字节数组
-            byte[] data = baos.toByteArray();
-            // 关闭字节输出流
-            baos.close();
-            // 关闭文件输入流
-            fis.close();
-            // 返回字符串对象
-            return new String(data);
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
         }
+        return file;
+    }
 
+    // 生成文件夹
+    public static void makeRootDirectory(String filePath) {
+        File file = null;
+        try {
+            file = new File(filePath);
+            if (!file.exists()) {
+                file.mkdir();
+            }
+        } catch (Exception e) {
+            Log.i("error:", e + "");
+        }
     }
 }

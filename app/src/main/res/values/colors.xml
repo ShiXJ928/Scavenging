@@ -10,4 +10,5 @@
     <color name="bg_grey">#cdcdcd</color>
     <color name="transparent">#00ffffff</color>
     <color name="line_color">#6C6B6B</color>
+    <color name="black">#000000</color>
 </resources>

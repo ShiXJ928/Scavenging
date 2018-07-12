@@ -14,37 +14,54 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:gravity="center"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_utf"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <LinearLayout
+            android:id="@+id/ll_entry"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
             android:layout_margin="10dp"
-            android:background="@color/bg_blue"
-            android:padding="10dp"
-            android:text="超高频录入"
-            android:textColor="@color/white" />
+            android:background="#73CC3F"
+            android:gravity="center"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_bar_code"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="@color/bg_blue"
-            android:padding="10dp"
-            android:text="条形码录入"
-            android:textColor="@color/white" />
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/entry" />
 
-        <TextView
-            android:id="@+id/tv_file"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="数据录入"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_file"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
             android:layout_margin="10dp"
-            android:background="@color/bg_blue"
-            android:padding="10dp"
-            android:text="生成文件"
-            android:textColor="@color/white" />
+            android:background="#FF6700"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/save" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="生成盘点文件"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

@@ -2,6 +2,7 @@
     package="com.zq.scavenging">
 
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
 
     <application
         android:name=".application.MyApplication"
@@ -17,6 +18,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".acty.UTFEntryActy" />
+        <activity
+            android:name=".acty.EntryActy"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".acty.EquipmentEntryActy"
+            android:launchMode="singleTask" />
+        <activity android:name=".acty.EntryInfoActy" />
     </application>
 </manifest>
