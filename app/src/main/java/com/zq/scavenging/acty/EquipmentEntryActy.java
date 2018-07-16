@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.zq.scavenging.R;
 import com.zq.scavenging.adapter.EquipmentListAdapter;
 import com.zq.scavenging.bean.EquipmentBean;
+import com.zq.scavenging.bean.ShelvesInfo;
 import com.zq.scavenging.util.BeepManager;
 import com.zq.scavenging.util.LoveDao;
 import com.zq.scavenging.util.ToastUtil;
@@ -57,6 +58,7 @@ public class EquipmentEntryActy extends BaseActy {
     private int type;
     private TextView tv_type;
     private int postionType;
+    private List<ShelvesInfo> shelvesInfos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +91,8 @@ public class EquipmentEntryActy extends BaseActy {
         tv_save.setOnClickListener(this);
         listView = (ListView) findViewById(R.id.list);
         list = new ArrayList<>();
-        adapter = new EquipmentListAdapter(this, list);
+        shelvesInfos = new ArrayList<>();
+        adapter = new EquipmentListAdapter(this, shelvesInfos);
         listView.setAdapter(adapter);
         if (!UfhData.isDeviceOpen()) {
             Log.e("---------->", "open1");
@@ -173,6 +176,7 @@ public class EquipmentEntryActy extends BaseActy {
                                 equipmentBean.setType(1);
                                 equipmentBean.setPostionType(postionType);
                                 list.add(equipmentBean);
+                                addData(equipmentBean);
                                 beepManager.play();
                                 change = 1;
                             }
@@ -206,6 +210,7 @@ public class EquipmentEntryActy extends BaseActy {
                                 equipmentBean.setType(2);
                                 equipmentBean.setPostionType(postionType);
                                 list.add(equipmentBean);
+                                addData(equipmentBean);
                                 adapter.notifyDataSetChanged();
                                 beepManager.play();
                             } else {
@@ -232,6 +237,23 @@ public class EquipmentEntryActy extends BaseActy {
             super.handleMessage(message);
         }
     };
+
+    private void addData(EquipmentBean bean) {
+        int i = 0;
+        for (ShelvesInfo info : shelvesInfos) {
+            if (info.getName() == bean.getNameStr()) {
+                info.setNum(info.getNum() + 1);
+                break;
+            }
+            i++;
+        }
+        if (i == shelvesInfos.size()) {
+            ShelvesInfo info = new ShelvesInfo();
+            info.setNum(1);
+            info.setName(bean.getNameStr());
+            shelvesInfos.add(info);
+        }
+    }
 
     //按键的时候
     @Override

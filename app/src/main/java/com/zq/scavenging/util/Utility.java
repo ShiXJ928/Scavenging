@@ -285,110 +285,88 @@ public class Utility {
         String name = "";
         switch (str.substring(4, 6)) {
             case "01":
-                name = "货架A";
+                name = "A";
                 break;
             case "02":
-                name = "货架B";
+                name = "B";
                 break;
             case "03":
-                name = "货架C";
+                name = "C";
                 break;
             case "04":
-                name = "货架D";
+                name = "D";
                 break;
             case "05":
-                name = "货架E";
+                name = "E";
                 break;
             case "06":
-                name = "货架F";
+                name = "F";
                 break;
             case "07":
-                name = "货架G";
+                name = "G";
                 break;
             case "08":
-                name = "货架H";
+                name = "H";
                 break;
             case "09":
-                name = "货架I";
+                name = "I";
                 break;
             case "0A":
-                name = "货架J";
+                name = "J";
                 break;
             case "0B":
-                name = "货架K";
+                name = "K";
                 break;
             case "0C":
-                name = "货架L";
+                name = "L";
                 break;
             case "0D":
-                name = "货架M";
+                name = "M";
                 break;
             case "0E":
-                name = "货架N";
+                name = "N";
                 break;
             case "0F":
-                name = "货架O";
+                name = "O";
                 break;
             case "10":
-                name = "货架P";
+                name = "P";
                 break;
             case "11":
-                name = "货架Q";
+                name = "Q";
                 break;
             case "12":
-                name = "货架R";
+                name = "R";
                 break;
             case "13":
-                name = "货架S";
+                name = "S";
                 break;
             case "14":
-                name = "货架T";
+                name = "T";
                 break;
             case "15":
-                name = "货架U";
+                name = "U";
                 break;
             case "16":
-                name = "货架V";
+                name = "V";
                 break;
             case "17":
-                name = "货架W";
+                name = "W";
                 break;
             case "18":
-                name = "货架X";
+                name = "X";
                 break;
             case "19":
-                name = "货架Y";
+                name = "Y";
                 break;
             case "1A":
-                name = "货架Z";
+                name = "Z";
                 break;
             default:
-                name = "货架" + str.substring(4, 6);
+                name = str.substring(4, 6);
                 break;
         }
-        switch (str.substring(6, 8)) {
-            case "01":
-                name = name + "-1层";
-                break;
-            case "02":
-                name = name + "-2层";
-                break;
-            case "03":
-                name = name + "-3层";
-                break;
-            case "04":
-                name = name + "-4层";
-                break;
-            case "05":
-                name = name + "-5层";
-                break;
-            case "06":
-                name = name + "-6层";
-                break;
-            default:
-                name = name + "-" + str.substring(6, 8) + "层";
-                break;
-        }
+        name = name + str.substring(6, 7) + "-" + str.substring(7, 8);
         return name;
     }
 

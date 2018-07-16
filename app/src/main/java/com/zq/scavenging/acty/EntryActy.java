@@ -39,6 +39,7 @@ public class EntryActy extends BaseActy {
     private ShelvesInfoAdapter adapter;
     private Intent intent;
     private BeepManager beepManager;
+    private boolean first = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +117,7 @@ public class EntryActy extends BaseActy {
                                 .replace("}", "").replace(" ", "").split(",");
                         stringList = Arrays.asList(str);
                         for (String string : stringList) {
+                            Log.e("------->", string);
                             string = string.substring(0, 8);
                             if (string.substring(0, 4).equals("06FF")) {
                                 stopTimer();
@@ -143,9 +145,10 @@ public class EntryActy extends BaseActy {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         // TODO Auto-generated method stub
         if (keyCode == KeyEvent.KEYCODE_F12) {
-            if (!UfhData.isDeviceOpen()) {
+            if (!UfhData.isDeviceOpen() || first) {
                 Log.e("---------->", "open");
-                UfhData.UhfGetData.OpenUhf(57600, (byte) 0x00, 4, 1, null);
+                int result = UfhData.UhfGetData.OpenUhf(57600, (byte) 0x00, 4, 1, null);
+                first = false;
             }
             startTimer();
             return true;

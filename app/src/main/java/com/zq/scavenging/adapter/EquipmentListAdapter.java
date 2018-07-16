@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.zq.scavenging.R;
 import com.zq.scavenging.acty.BaseActy;
-import com.zq.scavenging.bean.EquipmentBean;
+import com.zq.scavenging.bean.ShelvesInfo;
 import com.zq.scavenging.util.Utility;
 
 import java.util.List;
@@ -20,11 +20,11 @@ import java.util.List;
 
 public class EquipmentListAdapter extends BaseAdapter {
 
-    private List<EquipmentBean> list;
+    private List<ShelvesInfo> list;
     private BaseActy context;
     private LayoutInflater mInflater;
 
-    public EquipmentListAdapter(Context context, List<EquipmentBean> list) {
+    public EquipmentListAdapter(Context context, List<ShelvesInfo> list) {
         mInflater = LayoutInflater.from(context);
         this.context = (BaseActy) context;
         this.list = list;
@@ -49,7 +49,7 @@ public class EquipmentListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup viewGroup) {
         View view;
         ViewHolder holder = null;
-        EquipmentBean bean = list.get(position);
+        ShelvesInfo bean = list.get(position);
         // 判断convertView的状态，来达到复用效果
         if (null == convertView) {
             //如果convertView为空，则表示第一次显示该条目，需要创建一个view
@@ -64,8 +64,8 @@ public class EquipmentListAdapter extends BaseAdapter {
             view = convertView;
             holder = (ViewHolder) view.getTag();
         }
-        holder.tv_name.setText(Utility.getEquipName(bean.getName()));
-        holder.tv_position.setText(bean.getName());
+        holder.tv_name.setText(bean.getName());
+        holder.tv_position.setText(bean.getNum() + "");
         return view;
     }
 
