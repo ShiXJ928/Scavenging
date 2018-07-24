@@ -1,8 +1,11 @@
 package com.zq.scavenging.util;
 
+import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.RandomAccessFile;
 
 /**
@@ -29,7 +32,7 @@ public class FileUtil {
             raf.seek(file.length());
             raf.write(str.getBytes());
             raf.close();
-            ToastUtil.show("盘点文件生成成功");
+            ToastUtil.show("文件生成成功");
         } catch (Exception e) {
             Log.e("TestFile", "Error on write File:" + e);
         }
@@ -61,5 +64,37 @@ public class FileUtil {
         } catch (Exception e) {
             Log.i("error:", e + "");
         }
+    }
+
+    public static void clearFile(String filePath, String fileName) {
+        File file = null;
+        makeRootDirectory(filePath);
+        try {
+            file = new File(filePath + fileName);
+            file.delete();
+            file.createNewFile();
+        } catch (Exception e) {
+            Log.i("error:", e + "");
+        }
+    }
+
+    //读取文件
+    public static String loadFromSDFile(String fname) {
+        fname = "/" + fname;
+        String result = null;
+        try {
+            File f = new File(Environment.getExternalStorageDirectory().getPath() + fname);
+            int length = (int) f.length();
+            byte[] buff = new byte[length];
+            FileInputStream fin = new FileInputStream(f);
+            fin.read(buff);
+            fin.close();
+            result = new String(buff, "UTF-8");
+        } catch (Exception e) {
+            e.printStackTrace();
+            result = "[]";
+            ToastUtil.show("没有找到指定文件");
+        }
+        return result;
     }
 }

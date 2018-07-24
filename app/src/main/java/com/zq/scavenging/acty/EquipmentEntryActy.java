@@ -39,16 +39,12 @@ public class EquipmentEntryActy extends BaseActy {
 
     private static final int MSG_UPDATE_LISTVIEW = 0;
     private final int Handler_SHOW_RESULT = 1999;
-    private final int Handler_Scan = 2000;
     private Map<String, Integer> data;
     private Timer timer;
     //    private boolean _isCanceled = true;
     private BeepManager beepManager;
     private BarcodeManager barcodeManager;
-    private long nowTime = 0;
-    private long lastTime = 0;
     private byte[] codeBuffer;
-    private String codeId;
     private List<EquipmentBean> list;
     private ListView listView;
     private EquipmentListAdapter adapter;
@@ -59,15 +55,13 @@ public class EquipmentEntryActy extends BaseActy {
     private TextView tv_type;
     private int postionType;
     private List<ShelvesInfo> shelvesInfos;
+    private int isFirst;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.acty_utf_entry);
 
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("com.jb.action.F4key");
-        registerReceiver(f4Receiver, intentFilter);
         initView();
     }
 
@@ -101,7 +95,7 @@ public class EquipmentEntryActy extends BaseActy {
         //这个打开RFID阅读器
 //        UfhData.UhfGetData.OpenUhf(57600, (byte) 0x00, 4, 1, null);
         //打开滴滴的声音
-        UfhData.Set_sound(false);
+        UfhData.Set_sound(true);
         beepManager = new BeepManager(this, true, false);
     }
 
@@ -115,6 +109,7 @@ public class EquipmentEntryActy extends BaseActy {
             case R.id.tb_right:
                 stopTimer();
                 if (null != barcodeManager) {
+                    isFirst = 0;
                     barcodeManager.Barcode_Close();
                     barcodeManager.Barcode_Stop();
                 }
@@ -177,20 +172,19 @@ public class EquipmentEntryActy extends BaseActy {
                                 equipmentBean.setPostionType(postionType);
                                 list.add(equipmentBean);
                                 addData(equipmentBean);
-                                beepManager.play();
-                                change = 1;
+                                change++;
                             }
                         }
-                        if (change == 1) {
+                        if (change > 0) {
+                            beepManager.setLoop(change - 1);
+                            beepManager.play();
+                            beepManager.setLoop(0);
                             adapter.notifyDataSetChanged();
                         }
                         UfhData.scanResult6c.clear();
                     }
                     break;
                 case Handler_SHOW_RESULT:
-                    if (null != codeId) {
-                        Log.e("---------->codeId", codeId);
-                    }
                     if (null != codeBuffer) {
                         String str = new String(codeBuffer);
                         Log.e("---------->str", str);
@@ -214,21 +208,10 @@ public class EquipmentEntryActy extends BaseActy {
                                 adapter.notifyDataSetChanged();
                                 beepManager.play();
                             } else {
+                                beepManager.play();
                                 ToastUtil.show("标签类型不正确");
                             }
                         }
-                    }
-                    break;
-                case Handler_Scan:
-                    nowTime = System.currentTimeMillis();
-                    barcodeManager.Barcode_Stop();
-                    // 按键时间不低于200ms
-                    if (nowTime - lastTime > 200) {
-                        System.out.println("scan(0)");
-                        if (null != barcodeManager) {
-                            barcodeManager.Barcode_Start();
-                        }
-                        lastTime = nowTime;
                     }
                     break;
                 default:
@@ -269,14 +252,16 @@ public class EquipmentEntryActy extends BaseActy {
                 }
             } else {
                 stopTimer();
-                handler.sendEmptyMessage(Handler_Scan);
+                if (null != barcodeManager && isFirst == 0) {
+                    barcodeManager.Barcode_Start();
+                    isFirst = 1;
+                }
             }
             return true;
         } else {
             return super.onKeyDown(keyCode, event);
         }
     }
-
 
     //松开按钮的时候
     @Override
@@ -289,6 +274,7 @@ public class EquipmentEntryActy extends BaseActy {
             if (null != barcodeManager) {
                 barcodeManager.Barcode_Stop();
             }
+            isFirst = 0;
             adapter.notifyDataSetChanged();
             return true;
         } else {
@@ -303,41 +289,10 @@ public class EquipmentEntryActy extends BaseActy {
             // TODO Auto-generated method stub
             if (null != buffer) {
                 codeBuffer = buffer;
-                EquipmentEntryActy.this.codeId = codeId;
                 Message msg = new Message();
                 msg.what = Handler_SHOW_RESULT;
                 handler.sendMessage(msg);
                 barcodeManager.Barcode_Stop();
-            }
-        }
-    };
-
-    /**
-     * 捕获扫描物理按键广播
-     */
-    private BroadcastReceiver f4Receiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // Bundle bundle = intent.getExtras();
-            if (intent.hasExtra("F4key")) {
-                if (intent.getStringExtra("F4key").equals("down")) {
-                    Log.e("trig", "key down");
-                    // isContines = true;
-                    if (null != barcodeManager) {
-                        nowTime = System.currentTimeMillis();
-
-                        if (nowTime - lastTime > 200) {
-                            barcodeManager.Barcode_Stop();
-                            lastTime = nowTime;
-                            if (null != barcodeManager) {
-                                barcodeManager.Barcode_Start();
-                            }
-                        }
-                    }
-                } else if (intent.getStringExtra("F4key").equals("up")) {
-                    Log.e("trig", "key up");
-                }
             }
         }
     };
@@ -361,7 +316,6 @@ public class EquipmentEntryActy extends BaseActy {
     @Override
     protected void onDestroy() {
         // TODO Auto-generated method stub
-        unregisterReceiver(f4Receiver);
         super.onDestroy();
     }
 

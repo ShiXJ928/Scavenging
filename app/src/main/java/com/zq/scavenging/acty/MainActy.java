@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zq.scavenging.R;
@@ -27,7 +26,7 @@ import java.util.List;
 
 public class MainActy extends BaseActy {
 
-    private LinearLayout ll_entry, ll_file;
+    private LinearLayout ll_entry, ll_file, ll_warehousing, ll_outgoing;
     private Intent intent;
 
     @Override
@@ -39,11 +38,15 @@ public class MainActy extends BaseActy {
     }
 
     private void initView() {
-        initTitleBar(R.id.title, 0, 0, "首页", null, R.color.bg_blue, R.color.white);
+        initTitleBar(R.id.title, 0, 0, "警用装备管理", null, R.color.bg_blue, R.color.white);
         ll_entry = (LinearLayout) findViewById(R.id.ll_entry);
         ll_entry.setOnClickListener(this);
         ll_file = (LinearLayout) findViewById(R.id.ll_file);
         ll_file.setOnClickListener(this);
+        ll_warehousing = (LinearLayout) findViewById(R.id.ll_warehousing);
+        ll_warehousing.setOnClickListener(this);
+        ll_outgoing = (LinearLayout) findViewById(R.id.ll_outgoing);
+        ll_outgoing.setOnClickListener(this);
     }
 
     @Override
@@ -73,7 +76,11 @@ public class MainActy extends BaseActy {
                 break;
             case R.id.ll_file:
                 List<EquipmentBean> list = new ArrayList<>();
+//                list= JSON.parseArray("[{\"id\":4,\"name\":\"06020102\",\"nameStr\":\"警用装备包\",\"postion\":\"qqq\",\"postionType\":2,\"type\":1},{\"id\":5,\"name\":\"06010002\",\"nameStr\":\"警用装具箱\",\"postion\":\"qqq\",\"postionType\":2,\"type\":1},{\"id\":6,\"name\":\"06010001\",\"nameStr\":\"警用装具箱\",\"postion\":\"qqq\",\"postionType\":2,\"type\":1}]", EquipmentBean.class);
                 list.addAll(LoveDao.queryAll());
+                for (EquipmentBean bean : list) {
+                    bean.setId(Long.parseLong(bean.getName().substring(4, 8), 16));
+                }
                 if (App.sharedUtility.getName().equals("") || list.size() == 0) {
                     ToastUtil.show("盘点数据为空，不能生成盘点文件");
                 } else {
@@ -90,8 +97,16 @@ public class MainActy extends BaseActy {
                 App.sharedUtility.setTime("");
                 LoveDao.deleteLoveAll();
                 break;
-//            case R.id.tv_file:
-//                break;
+            case R.id.ll_warehousing:
+                intent = new Intent(MainActy.this, BarcodeActy.class);
+                intent.putExtra("type", 1);
+                startActivity(intent);
+                break;
+            case R.id.ll_outgoing:
+                intent = new Intent(MainActy.this, BarcodeActy.class);
+                intent.putExtra("type", 2);
+                startActivity(intent);
+                break;
         }
     }
 

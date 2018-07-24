@@ -23,13 +23,14 @@ public class BeepManager {
     private int loadId1;
     private SoundPool mSoundPool;
     private Vibrator mVibrator;
+    private int loop;
 
     public BeepManager(Context context, boolean playBeep, boolean vibrate) {
         super();
         this.mContext = context;
         this.playBeep = playBeep;
         this.vibrate = vibrate;
-
+        this.loop = 0;
         initial();
     }
 
@@ -49,6 +50,14 @@ public class BeepManager {
         this.vibrate = vibrate;
     }
 
+    public int getLoop() {
+        return loop;
+    }
+
+    public void setLoop(int loop) {
+        this.loop = loop;
+    }
+
     private void initial() {
         if (null == mSoundPool) {
             mSoundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
@@ -62,9 +71,9 @@ public class BeepManager {
 
     public void play() {
         // playMusic
-        // if (playBeep && !km.inKeyguardRestrictedInputMode()) {
-        // mMediaPlayer.start();
-        // }
+//        if (playBeep && !km.inKeyguardRestrictedInputMode()) {
+//            mMediaPlayer.start();
+//        }
         if (playBeep) {
             // mMediaPlayer.start();
             // 参数1：播放特效加载后的ID�?
@@ -73,7 +82,7 @@ public class BeepManager {
             // 参数4：特效音乐播放的优先级，因为可以同时播放多个特效音乐
             // 参数5：是否循环播放，0只播放一�?0 = no loop, -1 = loop forever)
             // 参数6：特效音乐播放的速度�?F为正常播放，范围 0.5 �?2.0
-            mSoundPool.play(loadId1, 1f, 1f, 1, 0, 1f);
+            mSoundPool.play(loadId1, 1f, 1f, 1, loop, 1f);
         }
         // vibrate
         if (vibrate) {

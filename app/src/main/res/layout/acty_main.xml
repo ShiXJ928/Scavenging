@@ -12,56 +12,132 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/ll_entry"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_margin="10dp"
-            android:background="#73CC3F"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-            <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:src="@drawable/entry" />
+            <LinearLayout
+                android:id="@+id/ll_entry"
+                android:layout_width="0dp"
+                android:layout_height="130dp"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                android:background="#73CC3F"
+                android:gravity="center"
+                android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="数据录入"
-                android:textColor="@color/white"
-                android:textSize="20sp" />
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/entry" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="数据录入"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_file"
+                android:layout_width="0dp"
+                android:layout_height="130dp"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                android:background="#FF6700"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/save" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="生成文件"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/ll_file"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_margin="10dp"
-            android:background="#FF6700"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-            <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:src="@drawable/save" />
+            <LinearLayout
+                android:id="@+id/ll_warehousing"
+                android:layout_width="0dp"
+                android:layout_height="130dp"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                android:background="#FFBD35"
+                android:gravity="center"
+                android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="生成盘点文件"
-                android:textColor="@color/white"
-                android:textSize="20sp" />
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/warehousing" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="入库"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_outgoing"
+                android:layout_width="0dp"
+                android:layout_height="130dp"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                android:background="#1296DB"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/outgoing" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="出库"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="如东公安局"
+        android:textColor="@color/black"
+        android:textSize="18sp" />
+
 </LinearLayout>

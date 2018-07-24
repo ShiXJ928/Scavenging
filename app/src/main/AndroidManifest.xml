@@ -25,5 +25,6 @@
             android:name=".acty.EquipmentEntryActy"
             android:launchMode="singleTask" />
         <activity android:name=".acty.EntryInfoActy" />
+        <activity android:name=".acty.BarcodeActy" />
     </application>
 </manifest>
