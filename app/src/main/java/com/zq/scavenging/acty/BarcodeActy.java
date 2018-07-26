@@ -1,5 +1,6 @@
 package com.zq.scavenging.acty;
 
+import android.content.Context;
 import android.content.Intent;
 import android.haobin.barcode.BarcodeManager;
 import android.os.Bundle;
@@ -13,9 +14,14 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.zq.scavenging.R;
 import com.zq.scavenging.adapter.LabelListAdapter;
+import com.zq.scavenging.application.App;
 import com.zq.scavenging.bean.Label;
+import com.zq.scavenging.bean.Result;
+import com.zq.scavenging.net.NetPostMethod;
+import com.zq.scavenging.net.NetUrl;
 import com.zq.scavenging.util.BeepManager;
 import com.zq.scavenging.util.FileUtil;
 import com.zq.scavenging.util.Utility;
@@ -49,7 +55,8 @@ public class BarcodeActy extends BaseActy {
                 case Handler_SHOW_RESULT:
                     if (null != codeBuffer) {
                         String str = new String(codeBuffer);
-                        addLable(str);
+                        postInfo(str);
+//                        addLable(str);
                     }
                     break;
                 default:
@@ -74,10 +81,10 @@ public class BarcodeActy extends BaseActy {
         type = intent.getIntExtra("type", 1);
         tv_time = (TextView) findViewById(R.id.tv_time);
         if (type == 1) {
-            initTitleBar(R.id.title, R.drawable.back, 0, "入库", "保存", R.color.bg_blue, R.color.white);
+            initTitleBar(R.id.title, R.drawable.back, 0, "入库", null, R.color.bg_blue, R.color.white);
             tv_time.setText("入库时间");
         } else {
-            initTitleBar(R.id.title, R.drawable.back, 0, "出库", "保存", R.color.bg_blue, R.color.white);
+            initTitleBar(R.id.title, R.drawable.back, 0, "出库", null, R.color.bg_blue, R.color.white);
             tv_time.setText("出库时间");
         }
         beepManager = new BeepManager(this, true, false);
@@ -85,7 +92,7 @@ public class BarcodeActy extends BaseActy {
             barcodeManager = BarcodeManager.getInstance();
         }
         barcodeManager.Barcode_Open(this, dataReceived);
-        setting = JSON.parseArray(FileUtil.loadFromSDFile("setting.txt"), Label.class);
+//        setting = JSON.parseArray(FileUtil.loadFromSDFile("setting.txt"), Label.class);
         list = new ArrayList<>();
         listView = (ListView) findViewById(R.id.list);
         adapter = new LabelListAdapter(this, list);
@@ -97,12 +104,13 @@ public class BarcodeActy extends BaseActy {
         super.onClick(v);
         switch (v.getId()) {
             case R.id.tb_left:
+//                postInfo("03010003");
                 finish();
                 break;
-            case R.id.tv_right:
-                save();
-                finish();
-                break;
+//            case R.id.tv_right:
+//                save();
+//                finish();
+//                break;
         }
     }
 
@@ -183,42 +191,86 @@ public class BarcodeActy extends BaseActy {
         }
     }
 
-    private void addLable(String str) {
-        int position = 0;
-        for (Label bean : list) {
-            if (bean.getLabelStr().equals(str)) {
-                break;
-            }
-            position++;
+    private void postInfo(final String str) {
+        dlg.show();
+        JSONObject post = new JSONObject();
+        post.put("EquID", str);
+        if (type == 1) {
+            post.put("status", 0);
+        } else {
+            post.put("status", 1);
         }
-        if (position == list.size()) {
-            Label label = new Label();
-            label.setLabelStr(str);
-            label.setTime(Utility.getNowTime("yyyy-MM-dd HH:mm:ss"));
-            int position1 = 0;
-            for (Label bean : setting) {
-                if (bean.getLabelStr().equals(str)) {
-                    label.setName(bean.getName());
-                    break;
-                }
-                position1++;
+        new NetPostMethod(this, NetUrl.POST_SHELF_INFO, App.cachedThreadPool, post) {
+            @Override
+            public void runSuccsess(final Result r) {
+                runOnUiThread(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                dlg.dismiss();
+                                String name = r.getValue().toString();
+                                Label label = new Label();
+                                label.setName(name);
+                                label.setTime(Utility.getNowTime("yyyy-MM-dd HH:mm"));
+                                label.setLabelStr(str);
+                                list.add(label);
+                                adapter.notifyDataSetChanged();
+                            }
+                        }
+                );
             }
-            if (position1 == setting.size()) {
-                label.setName("其他");
+
+            @Override
+            public void serverfail() {
+                dlg.dismiss();
+                showServerWarinning();
             }
-            beepManager.play();
-            list.add(label);
-            adapter.notifyDataSetChanged();
-        }
+
+            @Override
+            public void runfail(Context ctx, String message) {
+                dlg.dismiss();
+                showFailWarinning(ctx, message);
+            }
+
+        };
     }
 
-    private void save() {
-        JSONArray post = (JSONArray) JSON.toJSON(list);
-        if (type == 1) {
-            FileUtil.saveFile(post.toJSONString(), "/sdcard/出入库/", "入库-" + Utility.getNowTime("yyyyMMddHHmm") + ".txt");
-        } else {
-            FileUtil.saveFile(post.toJSONString(), "/sdcard/出入库/", "出库-" + Utility.getNowTime("yyyyMMddHHmm") + ".txt");
-        }
-    }
+//    private void addLable(String str) {
+//        int position = 0;
+//        for (Label bean : list) {
+//            if (bean.getLabelStr().equals(str)) {
+//                break;
+//            }
+//            position++;
+//        }
+//        if (position == list.size()) {
+//            Label label = new Label();
+//            label.setLabelStr(str);
+//            label.setTime(Utility.getNowTime("yyyy-MM-dd HH:mm:ss"));
+//            int position1 = 0;
+//            for (Label bean : setting) {
+//                if (bean.getLabelStr().equals(str)) {
+//                    label.setName(bean.getName());
+//                    break;
+//                }
+//                position1++;
+//            }
+//            if (position1 == setting.size()) {
+//                label.setName("其他");
+//            }
+//            beepManager.play();
+//            list.add(label);
+//            adapter.notifyDataSetChanged();
+//        }
+//    }
+//
+//    private void save() {
+//        JSONArray post = (JSONArray) JSON.toJSON(list);
+//        if (type == 1) {
+//            FileUtil.saveFile(post.toJSONString(), "/sdcard/出入库/", "入库-" + Utility.getNowTime("yyyyMMddHHmm") + ".txt");
+//        } else {
+//            FileUtil.saveFile(post.toJSONString(), "/sdcard/出入库/", "出库-" + Utility.getNowTime("yyyyMMddHHmm") + ".txt");
+//        }
+//    }
 }
 

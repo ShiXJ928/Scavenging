@@ -33,10 +33,10 @@ public abstract class NetGetMethod {
                     try {
                         final Result result = JSON.parseObject(Net.httpGetMethod(uri).toString(), Result.class);
                         if (!ac.isFinishing()) {
-                            if (result.getError_code() == 0) {  //存在-1警告提示
+                            if (result.getCode() == 1) {  //存在-1警告提示
                                 runSuccsess(result);
                             } else {
-                                runfail(ac, result.getMessage());
+                                runfail(ac, result.getValue().toString());
                             }
                         }
                     } catch (NullPointerException e) {
