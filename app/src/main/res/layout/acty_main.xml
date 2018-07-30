@@ -23,7 +23,7 @@
             <LinearLayout
                 android:id="@+id/ll_entry"
                 android:layout_width="0dp"
-                android:layout_height="130dp"
+                android:layout_height="120dp"
                 android:layout_margin="10dp"
                 android:layout_weight="1"
                 android:background="#73CC3F"
@@ -48,7 +48,7 @@
             <LinearLayout
                 android:id="@+id/ll_file"
                 android:layout_width="0dp"
-                android:layout_height="130dp"
+                android:layout_height="120dp"
                 android:layout_margin="10dp"
                 android:layout_weight="1"
                 android:background="#FF6700"
@@ -79,7 +79,7 @@
             <LinearLayout
                 android:id="@+id/ll_warehousing"
                 android:layout_width="0dp"
-                android:layout_height="130dp"
+                android:layout_height="120dp"
                 android:layout_margin="10dp"
                 android:layout_weight="1"
                 android:background="#FFBD35"
@@ -103,7 +103,7 @@
             <LinearLayout
                 android:id="@+id/ll_outgoing"
                 android:layout_width="0dp"
-                android:layout_height="130dp"
+                android:layout_height="120dp"
                 android:layout_margin="10dp"
                 android:layout_weight="1"
                 android:background="#1296DB"

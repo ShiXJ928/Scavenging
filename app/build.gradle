@@ -37,9 +37,8 @@ dependencies {
     compile 'com.android.support:multidex:1.0.0'
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile files('libs/fastjson-1.2.5.jar')
-    compile files('libs/UhfLib.jar')
-    compile files('libs/mt5000_V1.0.4_nolog.jar')
     compile project(':library_PullToRefreshSwipeMenuListView')
     //greendao依赖
     compile 'org.greenrobot:greendao:3.2.0'
+    compile files('libs/platform_sdk_v2.4.0210.jar')
 }

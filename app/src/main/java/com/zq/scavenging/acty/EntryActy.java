@@ -9,12 +9,12 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ListView;
 
+import com.UHF.scanlable.UfhData;
 import com.zq.scavenging.R;
 import com.zq.scavenging.adapter.ShelvesInfoAdapter;
 import com.zq.scavenging.bean.ShelvesInfo;
 import com.zq.scavenging.util.BeepManager;
 import com.zq.scavenging.util.LoveDao;
-import com.zq.scavenging.util.UfhData;
 import com.zq.scavenging.view.ChooseEditDialog;
 
 import java.util.ArrayList;
@@ -32,14 +32,20 @@ import java.util.TimerTask;
 public class EntryActy extends BaseActy {
 
     private static final int MSG_UPDATE_LISTVIEW = 0;
-    private Map<String, Integer> data;
+    private Map<String, Long> data;
     private Timer timer;
     private List<ShelvesInfo> list;
     private ListView listView;
     private ShelvesInfoAdapter adapter;
     private Intent intent;
     private BeepManager beepManager;
-    private boolean first = true;
+    private Thread thread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            UfhData.UhfGetData.OpenUhf(57600, (byte) 0x00, 4, 1, null);
+            dlg.dismiss();
+        }
+    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +69,8 @@ public class EntryActy extends BaseActy {
 //        dlg.dismiss();
         //打开滴滴的声音
         beepManager = new BeepManager(this, true, false);
-        UfhData.Set_sound(false);
+        dlg.show();
+        thread.start();
     }
 
     @Override
@@ -119,6 +126,7 @@ public class EntryActy extends BaseActy {
                         for (String string : stringList) {
                             Log.e("------->", string);
                             string = string.substring(0, 8);
+                            Log.e("------->", string);
                             if (string.substring(0, 4).equals("06FF")) {
                                 stopTimer();
                                 beepManager.play();
@@ -144,12 +152,7 @@ public class EntryActy extends BaseActy {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         // TODO Auto-generated method stub
-        if (keyCode == KeyEvent.KEYCODE_F12) {
-            if (!UfhData.isDeviceOpen() || first) {
-                Log.e("---------->", "open");
-                int result = UfhData.UhfGetData.OpenUhf(57600, (byte) 0x00, 4, 1, null);
-                first = false;
-            }
+        if (keyCode == KeyEvent.KEYCODE_SYSRQ) {
             startTimer();
             return true;
         } else {
@@ -162,7 +165,7 @@ public class EntryActy extends BaseActy {
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         // TODO Auto-generated method stub
-        if (keyCode == KeyEvent.KEYCODE_F12) {
+        if (keyCode == KeyEvent.KEYCODE_SYSRQ) {
             stopTimer();
             return true;
         } else {
@@ -188,7 +191,7 @@ public class EntryActy extends BaseActy {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                UfhData.read6c();
+                UfhData.read6c(1, 0);
                 handler.removeMessages(MSG_UPDATE_LISTVIEW);
                 handler.sendEmptyMessage(MSG_UPDATE_LISTVIEW);
             }

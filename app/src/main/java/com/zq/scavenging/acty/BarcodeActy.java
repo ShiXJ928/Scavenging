@@ -1,7 +1,11 @@
 package com.zq.scavenging.acty;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
-import android.haobin.barcode.BarcodeManager;
+import android.content.IntentFilter;
+import android.device.ScanManager;
+import android.device.scanner.configuration.PropertyID;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -32,9 +36,7 @@ public class BarcodeActy extends BaseActy {
 
     private final int Handler_SHOW_RESULT = 1999;
     private BeepManager beepManager;
-    private BarcodeManager barcodeManager;
-    private byte[] codeBuffer;
-    private int isFirst;
+    private ScanManager mScanManager;
     private int type;
     private Intent intent;
     private TextView tv_time;
@@ -42,13 +44,17 @@ public class BarcodeActy extends BaseActy {
     private List<Label> list;
     private ListView listView;
     private LabelListAdapter adapter;
+    private String barcodeStr = null;
+    private final static String SCAN_ACTION = ScanManager.ACTION_DECODE;//default action
 
     private Handler mHandler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
                 case Handler_SHOW_RESULT:
-                    if (null != codeBuffer) {
-                        String str = new String(codeBuffer);
+                    if (null != barcodeStr) {
+                        String str = barcodeStr;
+                        barcodeStr = null;
+                        Log.e("---------->", str);
                         addLable(str);
                     }
                     break;
@@ -58,6 +64,20 @@ public class BarcodeActy extends BaseActy {
         }
 
         ;
+    };
+
+    private BroadcastReceiver mScanReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // TODO Auto-generated method stub
+            byte[] barcode = intent.getByteArrayExtra(ScanManager.DECODE_DATA_TAG);
+            int barcodelen = intent.getIntExtra(ScanManager.BARCODE_LENGTH_TAG, 0);
+            barcodeStr = new String(barcode, 0, barcodelen);
+            Message msg = new Message();
+            msg.what = Handler_SHOW_RESULT;
+            mHandler.sendMessage(msg);
+        }
     };
 
     @Override
@@ -81,10 +101,10 @@ public class BarcodeActy extends BaseActy {
             tv_time.setText("出库时间");
         }
         beepManager = new BeepManager(this, true, false);
-        if (barcodeManager == null) {
-            barcodeManager = BarcodeManager.getInstance();
+        if (mScanManager == null) {
+            mScanManager = new ScanManager();
         }
-        barcodeManager.Barcode_Open(this, dataReceived);
+        mScanManager.openScanner();
         setting = JSON.parseArray(FileUtil.loadFromSDFile("setting.txt"), Label.class);
         list = new ArrayList<>();
         listView = (ListView) findViewById(R.id.list);
@@ -109,19 +129,37 @@ public class BarcodeActy extends BaseActy {
     @Override
     protected void onResume() {
         // TODO Auto-generated method stub
-        if (barcodeManager == null) {
-            barcodeManager = BarcodeManager.getInstance();
+        if (mScanManager == null) {
+            mScanManager = new ScanManager();
         }
-        barcodeManager.Barcode_Open(this, dataReceived);
+        mScanManager.openScanner();
+        IntentFilter filter = new IntentFilter();
+        int[] idbuf = new int[]{PropertyID.WEDGE_INTENT_ACTION_NAME, PropertyID.WEDGE_INTENT_DATA_STRING_TAG};
+        String[] value_buf = mScanManager.getParameterString(idbuf);
+        if (value_buf != null && value_buf[0] != null && !value_buf[0].equals("")) {
+            filter.addAction(value_buf[0]);
+        } else {
+            filter.addAction(SCAN_ACTION);
+        }
+        registerReceiver(mScanReceiver, filter);
         super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        // TODO Auto-generated method stub
+        super.onPause();
+        if (mScanManager != null) {
+            mScanManager.stopDecode();
+        }
+        unregisterReceiver(mScanReceiver);
     }
 
     @Override
     protected void onStop() {
         // TODO Auto-generated method stub
-        if (null != barcodeManager) {
-            barcodeManager.Barcode_Close();
-            barcodeManager.Barcode_Stop();
+        if (null != mScanManager) {
+            mScanManager.closeScanner();
         }
         super.onStop();
     }
@@ -131,56 +169,6 @@ public class BarcodeActy extends BaseActy {
         // TODO Auto-generated method stub
 //        unregisterReceiver(f4Receiver);
         super.onDestroy();
-    }
-
-    BarcodeManager.Callback dataReceived = new BarcodeManager.Callback() {
-
-        @Override
-        public void Barcode_Read(byte[] buffer, String codeId, int errorCode) {
-            // TODO Auto-generated method stub
-            if (null != buffer) {
-                codeBuffer = buffer;
-                Message msg = new Message();
-                msg.what = Handler_SHOW_RESULT;
-                mHandler.sendMessage(msg);
-                barcodeManager.Barcode_Stop();
-                Log.e("---->", "stop");
-            }
-        }
-    };
-
-    //按键的时候
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        // TODO Auto-generated method stub
-        if (keyCode == KeyEvent.KEYCODE_F12) {
-            Log.d("UHFMainActivity", "onKeyDown :F12");
-            if (null != barcodeManager && isFirst == 0) {
-                barcodeManager.Barcode_Start();
-                isFirst = 1;
-            }
-            return true;
-        } else {
-            return super.onKeyDown(keyCode, event);
-        }
-    }
-
-
-    //松开按钮的时候
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-
-        // TODO Auto-generated method stub
-        if (keyCode == KeyEvent.KEYCODE_F12) {
-            Log.d("UHFMainActivity", "onKeyUp :F12");
-            if (null != barcodeManager) {
-                barcodeManager.Barcode_Stop();
-            }
-            isFirst = 0;
-            return true;
-        } else {
-            return super.onKeyDown(keyCode, event);
-        }
     }
 
     private void addLable(String str) {
