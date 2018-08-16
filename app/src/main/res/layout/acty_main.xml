@@ -18,11 +18,11 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/ll_entry"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="130dp"
                 android:layout_margin="10dp"
                 android:layout_weight="1"
@@ -47,7 +47,7 @@
 
             <LinearLayout
                 android:id="@+id/ll_file"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="130dp"
                 android:layout_margin="10dp"
                 android:layout_weight="1"
@@ -74,7 +74,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <LinearLayout
                 android:id="@+id/ll_warehousing"
@@ -136,7 +137,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="10dp"
-        android:text="如东公安局"
+        android:text="如皋公安局"
         android:textColor="@color/black"
         android:textSize="18sp" />
 

@@ -30,7 +30,7 @@ public class FileUtil {
             }
             RandomAccessFile raf = new RandomAccessFile(file, "rwd");
             raf.seek(file.length());
-            raf.write(str.getBytes());
+            raf.write(str.getBytes("gbk"));
             raf.close();
             ToastUtil.show("文件生成成功");
         } catch (Exception e) {
